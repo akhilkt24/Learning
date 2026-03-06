@@ -1,0 +1,26 @@
+pipeline {
+    agent any
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/akhilkt24/Learning.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'echo "No build needed for static HTML"'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'echo "Optional: lint HTML/CSS"'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                // Example: copy files to Apache/Nginx server
+                sh 'scp -r * user@server:/var/www/html/'
+            }
+        }
+    }
+}
