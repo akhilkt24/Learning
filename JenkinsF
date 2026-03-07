@@ -16,23 +16,13 @@ pipeline {
 
         stage('Stop Old Container') {
             steps {
-                // Stop and remove old container if it exists
                 sh 'docker rm -f my-html-container || true'
             }
         }
 
         stage('Run New Container') {
             steps {
-                // Run updated container on port 8080
                 sh 'docker run -d --name my-html-container -p 8080:80 my-html-site:latest'
-            }
-        }
-
-        stage('Push to Docker Hub') {
-            steps {
-                // Optional: push image to Docker Hub for deployment elsewhere
-                sh 'docker tag my-html-site:latest akhilkt/my-html-site:latest'
-                sh 'docker push akhilkt/my-html-site:latest'
             }
         }
     }
