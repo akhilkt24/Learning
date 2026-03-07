@@ -9,31 +9,30 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build') {
             steps {
-                sh 'docker build -t my-html-site:latest .'
+                sh 'docker build -t my-html-site:$BUILD_NUMBER .'
             }
         }
 
-        stage('Deploy to Test') {
+        stage('Deploy Test') {
             steps {
-                sh 'docker rm -f my-html-test || true'
-                sh 'docker run -d --name my-html-test -p 8081:80 my-html-site:latest'
+                sh 'docker rm -f test-container || true'
+                sh 'docker run -d --name test-container -p 8081:80 my-html-site:$BUILD_NUMBER'
             }
         }
 
-        stage('Approval for Production') {
+        stage('Approval') {
             steps {
-                input message: "Approve deployment to Production?", ok: "Deploy"
+                input message: "Deploy to Production?"
             }
         }
 
-        stage('Deploy to Production') {
+        stage('Deploy Production') {
             steps {
-                sh 'docker rm -f my-html-prod || true'
-                sh 'docker run -d --name my-html-prod -p 8080:80 my-html-site:latest'
+                sh 'docker rm -f prod-container || true'
+                sh 'docker run -d --name prod-container -p 8080:80 my-html-site:$BUILD_NUMBER'
             }
         }
-
     }
 }
