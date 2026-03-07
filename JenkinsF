@@ -40,24 +40,22 @@ pipeline {
             }
         }
 
-        stage('Test Validation') {
-            steps {
-                script {
-                    // Retry 5 times in 3-second intervals
-                    def status = sh(script: """
-                    for i in {1..5}; do
-                        code=\$(curl -s -o /dev/null -w "%{http_code}" http://localhost:$TEST_PORT)
-                        if [ "\$code" == "200" ]; then exit 0; fi
-                        sleep 3
-                    done
-                    exit 1
-                    """, returnStatus: true)
-                    if (status != 0) {
-                        error "Test environment failed!"
-                    }
-                }
+       stage('Test Validation') {
+    steps {
+        script {
+            // Basic health check
+            def status = sh(
+                script: "curl -s -o /dev/null -w \"%{http_code}\" http://localhost:$TEST_PORT",
+                returnStdout: true
+            ).trim()
+            
+            // Convert to integer and compare
+            if (status.toInteger() != 200) {
+                error "Test environment failed! HTTP status: $status"
             }
         }
+    }
+}
 
         stage('Approval') {
             steps {
