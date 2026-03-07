@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     stages {
+
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/akhilkt24/Learning.git'
@@ -14,14 +15,23 @@ pipeline {
             }
         }
 
-        stage('Stop Old Container') {
+        stage('Deploy Test Environment') {
             steps {
-                sh 'docker rm -f my-html-container || true'
+                sh 'docker rm -f my-html-test || true'
+                sh 'docker run -d --name my-html-test -p 8081:80 my-html-site:latest'
             }
         }
 
-        stage('Run New Container') {
+        stage('Test Application') {
             steps {
+                sh 'sleep 5'
+                sh 'curl -f http://localhost:8081'
+            }
+        }
+
+        stage('Deploy Production') {
+            steps {
+                sh 'docker rm -f my-html-container || true'
                 sh 'docker run -d --name my-html-container -p 8080:80 my-html-site:latest'
             }
         }
