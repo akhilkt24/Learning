@@ -1,6 +1,12 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = "my-html-site"
+        TEST_CONTAINER = "my-html-test"
+        PROD_CONTAINER = "my-html-prod"
+    }
+
     stages {
 
         stage('Checkout') {
@@ -11,14 +17,14 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'docker build -t my-html-site:$BUILD_NUMBER .'
+                sh 'docker build -t $IMAGE_NAME:$BUILD_NUMBER .'
             }
         }
 
         stage('Deploy Test') {
             steps {
-                sh 'docker rm -f test-container || true'
-                sh 'docker run -d --name test-container -p 8081:80 my-html-site:$BUILD_NUMBER'
+                sh 'docker rm -f $TEST_CONTAINER || true'
+                sh 'docker run -d --restart unless-stopped --name $TEST_CONTAINER -p 8081:80 $IMAGE_NAME:$BUILD_NUMBER'
             }
         }
 
@@ -30,9 +36,10 @@ pipeline {
 
         stage('Deploy Production') {
             steps {
-                sh 'docker rm -f prod-container || true'
-                sh 'docker run -d --name prod-container -p 8080:80 my-html-site:$BUILD_NUMBER'
+                sh 'docker rm -f $PROD_CONTAINER || true'
+                sh 'docker run -d --restart unless-stopped --name $PROD_CONTAINER -p 8080:80 $IMAGE_NAME:$BUILD_NUMBER'
             }
         }
+
     }
 }
