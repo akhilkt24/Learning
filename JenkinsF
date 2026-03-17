@@ -1,7 +1,3 @@
-Here you go! The complete ready-to-use file:
-bashcd ~/Learning
-cp JenkinsF JenkinsF.backup
-cat > JenkinsF << 'JENKINSEOF'
 pipeline {
     agent any
     environment {
