@@ -68,12 +68,23 @@ pipeline {
         echo "Scanning Docker image for vulnerabilities with Trivy..."
         script {
 
+            // Step 1: Ensure Trivy exists
+            def trivyCheck = sh(
+                script: "command -v trivy",
+                returnStatus: true
+            )
+
+            if (trivyCheck != 0) {
+                error "Trivy is NOT installed on Jenkins agent. Aborting pipeline."
+            }
+
+            // Step 2: Run scan
             def scanResult = sh(
                 script: "trivy image --exit-code 1 --severity CRITICAL --no-progress $IMAGE_NAME:$BUILD_NUMBER",
                 returnStatus: true
             )
 
-            if (scanResult == 1) {
+            if (scanResult != 0) {
                 error "CRITICAL vulnerabilities found in image! Aborting pipeline."
             }
 
