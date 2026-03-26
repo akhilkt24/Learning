@@ -1,1 +1,117 @@
+<!DOCTYPE html>
+<html>
+<body style='font-family:Arial,sans-serif;margin:0;padding:0;background:#f4f4f4;'>
+<div style='max-width:620px;margin:30px auto;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.12);'>
+
+  <!-- Header -->
+  <div style='background:#1a7f4b;padding:28px 32px;'>
+    <h1 style='color:#fff;margin:0;font-size:22px;'>Deployment Successful</h1>
+    <p style='color:#a8f0c6;margin:6px 0 0;font-size:14px;'>{{APP_NAME}} is live in production</p>
+  </div>
+
+  <!-- Status Banner -->
+  <div style='background:#d4edda;padding:14px 32px;border-left:4px solid #1a7f4b;'>
+    <p style='margin:0;color:#155724;font-weight:bold;font-size:15px;'>ALL STAGES PASSED - Application is healthy</p>
+  </div>
+
+  <!-- Build Details -->
+  <div style='padding:24px 32px;'>
+    <h2 style='color:#333;font-size:16px;border-bottom:1px solid #eee;padding-bottom:8px;margin-top:0;'>Build Details</h2>
+    <table style='width:100%;border-collapse:collapse;font-size:14px;'>
+      <tr>
+        <td style='padding:8px 0;color:#666;width:40%;'>Application</td>
+        <td style='font-weight:bold;'>{{APP_NAME}}</td>
+      </tr>
+      <tr style='background:#f9f9f9;'>
+        <td style='padding:8px 0;color:#666;'>Job Name</td>
+        <td>{{JOB_NAME}}</td>
+      </tr>
+      <tr>
+        <td style='padding:8px 0;color:#666;'>Build Number</td>
+        <td style='font-weight:bold;'>#{{BUILD_NUMBER}}</td>
+      </tr>
+      <tr style='background:#f9f9f9;'>
+        <td style='padding:8px 0;color:#666;'>Docker Image</td>
+        <td>{{DOCKER_IMAGE}}:{{BUILD_NUMBER}}</td>
+      </tr>
+      <tr>
+        <td style='padding:8px 0;color:#666;'>Docker Hub</td>
+        <td>
+          <a href='https://hub.docker.com/r/{{DOCKERHUB_USER}}/{{IMAGE_NAME}}' style='color:#1a7f4b;'>
+            hub.docker.com/r/{{DOCKERHUB_USER}}/{{IMAGE_NAME}}
+          </a>
+        </td>
+      </tr>
+      <tr style='background:#f9f9f9;'>
+        <td style='padding:8px 0;color:#666;'>Production URL</td>
+        <td>
+          <a href='http://{{PROD_HOST}}:{{PROD_PORT}}' style='color:#1a7f4b;'>
+            http://{{PROD_HOST}}:{{PROD_PORT}}
+          </a>
+        </td>
+      </tr>
+      <tr>
+        <td style='padding:8px 0;color:#666;'>Team</td>
+        <td>{{TEAM_NAME}}</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Pipeline Stages -->
+  <div style='padding:0 32px 24px;'>
+    <h2 style='color:#333;font-size:16px;border-bottom:1px solid #eee;padding-bottom:8px;'>Pipeline Stages</h2>
+    <table style='width:100%;border-collapse:collapse;font-size:14px;'>
+      <tr>
+        <td style='padding:6px 0;'>Checkout Code</td>
+        <td style='color:#1a7f4b;font-weight:bold;text-align:right;'>PASSED</td>
+      </tr>
+      <tr style='background:#f9f9f9;'>
+        <td style='padding:6px 0;'>Build Docker Image</td>
+        <td style='color:#1a7f4b;font-weight:bold;text-align:right;'>PASSED</td>
+      </tr>
+      <tr>
+        <td style='padding:6px 0;'>Push to Docker Hub</td>
+        <td style='color:#1a7f4b;font-weight:bold;text-align:right;'>PASSED</td>
+      </tr>
+      <tr style='background:#f9f9f9;'>
+        <td style='padding:6px 0;'>Deploy to Test</td>
+        <td style='color:#1a7f4b;font-weight:bold;text-align:right;'>PASSED</td>
+      </tr>
+      <tr>
+        <td style='padding:6px 0;'>Health Check - Test</td>
+        <td style='color:#1a7f4b;font-weight:bold;text-align:right;'>PASSED</td>
+      </tr>
+      <tr style='background:#f9f9f9;'>
+        <td style='padding:6px 0;'>Cleanup Test Container</td>
+        <td style='color:#1a7f4b;font-weight:bold;text-align:right;'>PASSED</td>
+      </tr>
+      <tr>
+        <td style='padding:6px 0;'>Manual Approval</td>
+        <td style='color:#1a7f4b;font-weight:bold;text-align:right;'>APPROVED</td>
+      </tr>
+      <tr style='background:#f9f9f9;'>
+        <td style='padding:6px 0;'>Deploy to Production</td>
+        <td style='color:#1a7f4b;font-weight:bold;text-align:right;'>PASSED</td>
+      </tr>
+      <tr>
+        <td style='padding:6px 0;'>Health Check - Production</td>
+        <td style='color:#1a7f4b;font-weight:bold;text-align:right;'>PASSED</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Buttons -->
+  <div style='padding:0 32px 28px;'>
+    <a href='{{BUILD_URL}}' style='background:#1a7f4b;color:#fff;padding:12px 24px;text-decoration:none;border-radius:4px;font-size:14px;display:inline-block;margin-right:12px;'>View Build</a>
+    <a href='http://{{PROD_HOST}}:{{PROD_PORT}}' style='background:#0066cc;color:#fff;padding:12px 24px;text-decoration:none;border-radius:4px;font-size:14px;display:inline-block;'>Open App</a>
+  </div>
+
+  <!-- Footer -->
+  <div style='background:#f4f4f4;padding:14px 32px;text-align:center;'>
+    <p style='margin:0;color:#999;font-size:12px;'>Automated message from Jenkins CI/CD | {{TEAM_NAME}}</p>
+  </div>
+
+</div>
+</body>
+</html>
 
