@@ -13,6 +13,7 @@ pipeline {
         TEAM_NAME       = "Akhil DevOps Team"
         DOCKERHUB_USER  = "akhilkt24"
         DOCKER_IMAGE    = "${DOCKERHUB_USER}/${IMAGE_NAME}"
+        DOCKER_BUILDKIT = "1"
     }
 
     options {
@@ -37,13 +38,53 @@ pipeline {
             }
         }
 
+        stage('Save Rollback Version') {
+            steps {
+                echo "Saving current production image tag for rollback..."
+                script {
+                    def currentImage = sh(
+                        script: "docker inspect --format='{{.Config.Image}}' ${PROD_CONTAINER} 2>/dev/null || echo 'none'",
+                        returnStdout: true
+                    ).trim()
+                    env.ROLLBACK_IMAGE = currentImage
+                    echo "Rollback version saved: ${env.ROLLBACK_IMAGE}"
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
-                echo "Building Docker image: ${IMAGE_NAME}:${BUILD_NUMBER}"
+                echo "Building Docker image with BuildKit: ${IMAGE_NAME}:${BUILD_NUMBER}"
                 sh '''
                     docker build -t $IMAGE_NAME:$BUILD_NUMBER .
                     docker tag $IMAGE_NAME:$BUILD_NUMBER $IMAGE_NAME:latest
+                    echo "Build complete: $IMAGE_NAME:$BUILD_NUMBER"
                 '''
+            }
+        }
+
+        stage('Security Scan') {
+            steps {
+                echo "Scanning Docker image for vulnerabilities with Trivy..."
+                script {
+                    sh '''
+                        if ! command -v trivy &> /dev/null; then
+                            echo "Installing Trivy..."
+                            curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+                        fi
+                    '''
+
+                    def scanResult = sh(
+                        script: "trivy image --exit-code 1 --severity CRITICAL --no-progress $IMAGE_NAME:$BUILD_NUMBER",
+                        returnStatus: true
+                    )
+
+                    if (scanResult == 1) {
+                        error "CRITICAL vulnerabilities found in image! Aborting pipeline."
+                    }
+
+                    echo "Security scan PASSED — no critical vulnerabilities found!"
+                }
             }
         }
 
@@ -82,6 +123,8 @@ pipeline {
                     docker run -d \
                         --name $TEST_CONTAINER \
                         --restart unless-stopped \
+                        --memory="256m" \
+                        --cpus="0.5" \
                         -p $TEST_PORT:80 \
                         $IMAGE_NAME:$BUILD_NUMBER
                 '''
@@ -152,6 +195,8 @@ pipeline {
                     docker run -d \
                         --name $PROD_CONTAINER \
                         --restart unless-stopped \
+                        --memory="512m" \
+                        --cpus="1.0" \
                         -p $PROD_PORT:80 \
                         $IMAGE_NAME:$BUILD_NUMBER
                 '''
@@ -164,18 +209,29 @@ pipeline {
                 script {
                     sleep(time: 10, unit: 'SECONDS')
 
-                    def status = sh(
-                        script: "curl -s -o /dev/null -w '%{http_code}' http://localhost:${PROD_PORT}",
-                        returnStdout: true
-                    ).trim()
+                    def retries = 5
+                    def passed  = false
 
-                    echo "Production HTTP response: ${status}"
+                    for (int i = 1; i <= retries; i++) {
+                        def status = sh(
+                            script: "curl -s -o /dev/null -w '%{http_code}' http://localhost:${PROD_PORT}",
+                            returnStdout: true
+                        ).trim()
 
-                    if (status != "200") {
-                        error "Production health check FAILED! HTTP ${status}. Manual rollback may be required."
+                        echo "Attempt ${i}/${retries} -> HTTP ${status}"
+
+                        if (status == "200") {
+                            echo "Production is LIVE and healthy!"
+                            passed = true
+                            break
+                        }
+
+                        if (i < retries) sleep(time: 5, unit: 'SECONDS')
                     }
 
-                    echo "Production is LIVE and healthy!"
+                    if (!passed) {
+                        error "Production health check FAILED! Triggering rollback..."
+                    }
                 }
             }
         }
@@ -190,40 +246,67 @@ pipeline {
             sh 'docker logout || true'
         }
 
-        success {
+        failure {
             script {
-                def body = readFile('mail-templates/success.html')
-                    .replace('{{BUILD_NUMBER}}', env.BUILD_NUMBER)
-                    .replace('{{APP_NAME}}',     env.APP_NAME)
-                    .replace('{{JOB_NAME}}',     env.JOB_NAME)
-                    .replace('{{BUILD_URL}}',    env.BUILD_URL)
-                    .replace('{{PROD_HOST}}',    env.PROD_HOST)
-                    .replace('{{PROD_PORT}}',    env.PROD_PORT)
-                    .replace('{{DOCKERHUB_USER}}', env.DOCKERHUB_USER)
-                    .replace('{{IMAGE_NAME}}',   env.IMAGE_NAME)
-                    .replace('{{DOCKER_IMAGE}}', env.DOCKER_IMAGE)
-                    .replace('{{TEAM_NAME}}',    env.TEAM_NAME)
+                echo "Pipeline FAILED — checking if rollback is needed..."
+
+                if (env.ROLLBACK_IMAGE && env.ROLLBACK_IMAGE != 'none') {
+                    echo "Rolling back production to: ${env.ROLLBACK_IMAGE}"
+                    sh """
+                        docker rm -f ${PROD_CONTAINER} || true
+
+                        BLOCKING=\$(docker ps -q --filter "publish=${PROD_PORT}")
+                        if [ -n "\$BLOCKING" ]; then
+                            docker rm -f \$BLOCKING
+                        fi
+
+                        docker run -d \\
+                            --name ${PROD_CONTAINER} \\
+                            --restart unless-stopped \\
+                            --memory="512m" \\
+                            --cpus="1.0" \\
+                            -p ${PROD_PORT}:80 \\
+                            ${env.ROLLBACK_IMAGE}
+
+                        echo "Rollback complete! Production restored to ${env.ROLLBACK_IMAGE}"
+                    """
+                } else {
+                    echo "No previous version found — skipping rollback."
+                }
+
+                def body = readFile('mail-templates/failure.html')
+                    .replace('{{BUILD_NUMBER}}',   env.BUILD_NUMBER)
+                    .replace('{{APP_NAME}}',        env.APP_NAME)
+                    .replace('{{JOB_NAME}}',        env.JOB_NAME)
+                    .replace('{{BUILD_URL}}',       env.BUILD_URL)
+                    .replace('{{IMAGE_NAME}}',      env.IMAGE_NAME)
+                    .replace('{{TEAM_NAME}}',       env.TEAM_NAME)
+                    .replace('{{ROLLBACK_IMAGE}}',  env.ROLLBACK_IMAGE ?: 'none')
 
                 mail to: "${EMAIL_TO}",
                      mimeType: 'text/html',
-                     subject: "SUCCESS [${APP_NAME}] Build #${BUILD_NUMBER} is LIVE",
+                     subject: "FAILED [${APP_NAME}] Build #${BUILD_NUMBER} - Rolled Back to ${env.ROLLBACK_IMAGE}",
                      body: body
             }
         }
 
-        failure {
+        success {
             script {
-                def body = readFile('mail-templates/failure.html')
-                    .replace('{{BUILD_NUMBER}}', env.BUILD_NUMBER)
-                    .replace('{{APP_NAME}}',     env.APP_NAME)
-                    .replace('{{JOB_NAME}}',     env.JOB_NAME)
-                    .replace('{{BUILD_URL}}',    env.BUILD_URL)
-                    .replace('{{IMAGE_NAME}}',   env.IMAGE_NAME)
-                    .replace('{{TEAM_NAME}}',    env.TEAM_NAME)
+                def body = readFile('mail-templates/success.html')
+                    .replace('{{BUILD_NUMBER}}',    env.BUILD_NUMBER)
+                    .replace('{{APP_NAME}}',         env.APP_NAME)
+                    .replace('{{JOB_NAME}}',         env.JOB_NAME)
+                    .replace('{{BUILD_URL}}',        env.BUILD_URL)
+                    .replace('{{PROD_HOST}}',        env.PROD_HOST)
+                    .replace('{{PROD_PORT}}',        env.PROD_PORT)
+                    .replace('{{DOCKERHUB_USER}}',   env.DOCKERHUB_USER)
+                    .replace('{{IMAGE_NAME}}',       env.IMAGE_NAME)
+                    .replace('{{DOCKER_IMAGE}}',     env.DOCKER_IMAGE)
+                    .replace('{{TEAM_NAME}}',        env.TEAM_NAME)
 
                 mail to: "${EMAIL_TO}",
                      mimeType: 'text/html',
-                     subject: "FAILED [${APP_NAME}] Build #${BUILD_NUMBER} - Action Required",
+                     subject: "SUCCESS [${APP_NAME}] Build #${BUILD_NUMBER} is LIVE",
                      body: body
             }
         }
