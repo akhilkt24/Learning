@@ -63,30 +63,24 @@ pipeline {
             }
         }
 
-        stage('Security Scan') {
-            steps {
-                echo "Scanning Docker image for vulnerabilities with Trivy..."
-                script {
-                    sh '''
-                        if ! command -v trivy &> /dev/null; then
-                            echo "Installing Trivy..."
-                            curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
-                        fi
-                    '''
+       stage('Security Scan') {
+    steps {
+        echo "Scanning Docker image for vulnerabilities with Trivy..."
+        script {
 
-                    def scanResult = sh(
-                        script: "trivy image --exit-code 1 --severity CRITICAL --no-progress $IMAGE_NAME:$BUILD_NUMBER",
-                        returnStatus: true
-                    )
+            def scanResult = sh(
+                script: "trivy image --exit-code 1 --severity CRITICAL --no-progress $IMAGE_NAME:$BUILD_NUMBER",
+                returnStatus: true
+            )
 
-                    if (scanResult == 1) {
-                        error "CRITICAL vulnerabilities found in image! Aborting pipeline."
-                    }
-
-                    echo "Security scan PASSED — no critical vulnerabilities found!"
-                }
+            if (scanResult == 1) {
+                error "CRITICAL vulnerabilities found in image! Aborting pipeline."
             }
+
+            echo "Security scan PASSED — no critical vulnerabilities found!"
         }
+    }
+}
 
         stage('Push to Docker Hub') {
             steps {
