@@ -63,36 +63,35 @@ pipeline {
             }
         }
 
-       stage('Security Scan') {
+      stage('Security Scan') {
     steps {
         echo "Scanning Docker image for vulnerabilities with Trivy..."
         script {
 
-            // Step 1: Ensure Trivy exists
+            // Ensure trivy exists
             def trivyCheck = sh(
-                script: "command -v trivy",
+                script: "which trivy",
                 returnStatus: true
             )
 
             if (trivyCheck != 0) {
-                error "Trivy is NOT installed on Jenkins agent. Aborting pipeline."
+                error "Trivy is NOT installed or not in PATH!"
             }
 
-            // Step 2: Run scan
+            // Run scan
             def scanResult = sh(
                 script: "trivy image --exit-code 1 --severity CRITICAL --no-progress $IMAGE_NAME:$BUILD_NUMBER",
                 returnStatus: true
             )
 
             if (scanResult != 0) {
-                error "CRITICAL vulnerabilities found in image! Aborting pipeline."
+                error "CRITICAL vulnerabilities found OR scan failed!"
             }
 
-            echo "Security scan PASSED — no critical vulnerabilities found!"
+            echo "Security scan PASSED — image is safe."
         }
     }
 }
-
         stage('Push to Docker Hub') {
             steps {
                 echo "Pushing image to Docker Hub..."
