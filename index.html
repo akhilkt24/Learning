@@ -1,1 +1,25 @@
-<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Digital Clock Timer</title>\n    <link rel="stylesheet" href="styles.css">\n</head>\n<body>\n    <div class="clock-container">\n        <div id="clock"></div>\n        <div class="controls">\n            <button id="toggle-format">Toggle 12/24 Hour</button>\n        </div>\n        <div id="date"></div>\n    </div>\n    <script src="script.js"></script>\n</body>\n</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Professional Digital Clock Timer Application">
+    <title>Digital Clock Timer - Professional Edition</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="clock-container">
+        <h1 class="app-title">Digital Clock Timer</h1>
+        <div class="clock-display">
+            <div id="clock" class="time-display"></div>
+            <div id="date" class="date-display"></div>
+        </div>
+        <div class="controls">
+            <button id="toggle-format" class="btn btn-primary">Toggle 12/24 Hour Format</button>
+            <button id="toggle-timezone" class="btn btn-secondary">Change Timezone</button>
+        </div>
+        <div id="timezone-info" class="timezone-info"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
