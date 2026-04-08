@@ -1,97 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Info Website</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background: #f4f6f8;
-            color: #333;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documentation Page</title>
 
-        header {
-            background: #2c3e50;
-            color: white;
-            padding: 15px;
-            text-align: center;
-        }
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f8f9fa;
+    color: #202122;
+}
 
-        nav {
-            background: #34495e;
-            padding: 10px;
-            text-align: center;
-        }
+/* Header */
+header {
+    background: #ffffff;
+    border-bottom: 1px solid #ccc;
+    padding: 10px 20px;
+    font-size: 20px;
+    font-weight: bold;
+}
 
-        nav a {
-            color: white;
-            margin: 0 10px;
-            text-decoration: none;
-            font-size: 14px;
-        }
+/* Layout */
+.container {
+    display: flex;
+}
 
-        nav a:hover {
-            text-decoration: underline;
-        }
+/* Sidebar */
+.sidebar {
+    width: 220px;
+    background: #f0f0f0;
+    padding: 15px;
+    border-right: 1px solid #ccc;
+    height: 100vh;
+}
 
-        .container {
-            max-width: 900px;
-            margin: 20px auto;
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-        }
+.sidebar a {
+    display: block;
+    color: #0645ad;
+    text-decoration: none;
+    margin: 8px 0;
+    font-size: 14px;
+}
 
-        h2 {
-            border-bottom: 2px solid #ddd;
-            padding-bottom: 5px;
-        }
+.sidebar a:hover {
+    text-decoration: underline;
+}
 
-        footer {
-            text-align: center;
-            padding: 10px;
-            background: #2c3e50;
-            color: white;
-            margin-top: 20px;
-        }
-    </style>
+/* Main content */
+.content {
+    flex: 1;
+    padding: 20px;
+    max-width: 900px;
+}
+
+h1 {
+    font-size: 28px;
+    border-bottom: 1px solid #ccc;
+}
+
+h2 {
+    margin-top: 30px;
+    border-bottom: 1px solid #ddd;
+}
+
+p {
+    line-height: 1.6;
+}
+
+.infobox {
+    float: right;
+    width: 250px;
+    background: #ffffff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px;
+    font-size: 14px;
+}
+
+.infobox h3 {
+    margin-top: 0;
+    text-align: center;
+    background: #e9ecef;
+    padding: 5px;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 10px;
+    background: #ffffff;
+    border-top: 1px solid #ccc;
+    margin-top: 20px;
+}
+</style>
 </head>
+
 <body>
 
 <header>
-    <h1>Information Website</h1>
-    <p>Simple and clean layout</p>
+    Documentation Page
 </header>
 
-<nav>
-    <a href="#">Home</a>
-    <a href="#">About</a>
-    <a href="#">Services</a>
-    <a href="#">Contact</a>
-</nav>
-
 <div class="container">
-    <h2>Home</h2>
-    <p>This is a basic informational website. It is designed to present content clearly and professionally.</p>
 
-    <h2>About</h2>
-    <p>We provide structured information in a clean and readable format.</p>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <b>Contents</b>
+        <a href="#intro">Introduction</a>
+        <a href="#history">History</a>
+        <a href="#features">Features</a>
+        <a href="#references">References</a>
+    </div>
 
-    <h2>Services</h2>
-    <ul>
-        <li>Web Development</li>
-        <li>Consulting</li>
-        <li>Support</li>
-    </ul>
+    <!-- Main Content -->
+    <div class="content">
 
-    <h2>Contact</h2>
-    <p>Email: info@example.com</p>
+        <h1>Sample Topic</h1>
+
+        <div class="infobox">
+            <h3>Quick Info</h3>
+            <p><b>Type:</b> Documentation</p>
+            <p><b>Created:</b> 2026</p>
+            <p><b>Purpose:</b> Learning HTML</p>
+        </div>
+
+        <h2 id="intro">Introduction</h2>
+        <p>This page demonstrates a documentation-style layout similar to Wikipedia. It focuses on structured content and easy navigation.</p>
+
+        <h2 id="history">History</h2>
+        <p>Documentation websites became popular with the growth of the internet, helping users understand topics in a structured way.</p>
+
+        <h2 id="features">Features</h2>
+        <ul>
+            <li>Sidebar navigation</li>
+            <li>Clean typography</li>
+            <li>Infobox for quick facts</li>
+            <li>Section-based content</li>
+        </ul>
+
+        <h2 id="references">References</h2>
+        <p>Example references or external links can be listed here.</p>
+
+    </div>
 </div>
 
 <footer>
-    <p>&copy; 2026 Info Website</p>
+    &copy; 2026 Documentation Example
 </footer>
 
 </body>
