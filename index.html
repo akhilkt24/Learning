@@ -3,52 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Sample Website</title>
+    <title>Colorful Website</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
-            line-height: 1.6;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            color: #333;
         }
+
         header {
-            background: #333;
-            color: #fff;
-            padding: 15px 0;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            padding: 20px;
             text-align: center;
         }
+
         nav {
-            background: #555;
+            display: flex;
+            justify-content: center;
+            background: #ff4b2b;
             padding: 10px;
-            text-align: center;
         }
+
         nav a {
-            color: #fff;
-            margin: 0 10px;
+            color: white;
+            margin: 0 15px;
             text-decoration: none;
             font-weight: bold;
+            transition: 0.3s;
         }
+
         nav a:hover {
-            text-decoration: underline;
+            color: yellow;
         }
+
         .container {
-            padding: 20px;
-        }
-        footer {
-            background: #333;
-            color: #fff;
+            padding: 30px;
             text-align: center;
-            padding: 10px;
-            position: fixed;
-            width: 100%;
-            bottom: 0;
+        }
+
+        .card {
+            background: white;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 15px;
+            max-width: 400px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            color: white;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            transform: scale(1.1);
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background: #222;
+            color: white;
+            margin-top: 30px;
         }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>My Website</h1>
-    <p>Welcome to my simple webpage</p>
+    <h1>🌈 Colorful Website</h1>
+    <p>Bright, modern and beautiful design</p>
 </header>
 
 <nav>
@@ -59,22 +91,29 @@
 </nav>
 
 <div class="container">
-    <h2>Home</h2>
-    <p>This is a sample website created using HTML and CSS.</p>
 
-    <h2>About</h2>
-    <p>You can customize this template to build your own website.</p>
+    <div class="card">
+        <h2>Welcome</h2>
+        <p>This is a colorful website template with gradients and cards.</p>
+        <a href="#" class="btn">Learn More</a>
+    </div>
 
-    <h2>Services</h2>
-    <ul>
-        <li>Web Design</li>
-        <li>Development</li>
-        <li>SEO</li>
-    </ul>
+    <div class="card">
+        <h2>Our Services</h2>
+        <p>We create modern, responsive, and beautiful websites.</p>
+        <a href="#" class="btn">View Services</a>
+    </div>
+
+    <div class="card">
+        <h2>Contact</h2>
+        <p>Get in touch with us for your next project.</p>
+        <a href="#" class="btn">Contact Us</a>
+    </div>
+
 </div>
 
 <footer>
-    <p>&copy; 2026 My Website</p>
+    <p>&copy; 2026 Colorful Website | Designed with ❤️</p>
 </footer>
 
 </body>
