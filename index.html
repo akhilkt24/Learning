@@ -3,84 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Colorful Website</title>
+    <title>Info Website</title>
     <style>
         body {
+            font-family: Arial, sans-serif;
             margin: 0;
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            background: #f4f6f8;
             color: #333;
         }
 
         header {
-            background: linear-gradient(to right, #6a11cb, #2575fc);
+            background: #2c3e50;
             color: white;
-            padding: 20px;
+            padding: 15px;
             text-align: center;
         }
 
         nav {
-            display: flex;
-            justify-content: center;
-            background: #ff4b2b;
+            background: #34495e;
             padding: 10px;
+            text-align: center;
         }
 
         nav a {
             color: white;
-            margin: 0 15px;
+            margin: 0 10px;
             text-decoration: none;
-            font-weight: bold;
-            transition: 0.3s;
+            font-size: 14px;
         }
 
         nav a:hover {
-            color: yellow;
+            text-decoration: underline;
         }
 
         .container {
-            padding: 30px;
-            text-align: center;
-        }
-
-        .card {
-            background: white;
+            max-width: 900px;
             margin: 20px auto;
+            background: white;
             padding: 20px;
-            border-radius: 15px;
-            max-width: 400px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            border-radius: 5px;
         }
 
-        .btn {
-            display: inline-block;
-            margin-top: 15px;
-            padding: 10px 20px;
-            background: linear-gradient(to right, #ff416c, #ff4b2b);
-            color: white;
-            border-radius: 25px;
-            text-decoration: none;
-            transition: 0.3s;
-        }
-
-        .btn:hover {
-            transform: scale(1.1);
+        h2 {
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
         }
 
         footer {
             text-align: center;
-            padding: 15px;
-            background: #222;
+            padding: 10px;
+            background: #2c3e50;
             color: white;
-            margin-top: 30px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>🌈 Colorful Website</h1>
-    <p>Bright, modern and beautiful design</p>
+    <h1>Information Website</h1>
+    <p>Simple and clean layout</p>
 </header>
 
 <nav>
@@ -91,29 +73,25 @@
 </nav>
 
 <div class="container">
+    <h2>Home</h2>
+    <p>This is a basic informational website. It is designed to present content clearly and professionally.</p>
 
-    <div class="card">
-        <h2>Welcome</h2>
-        <p>This is a colorful website template with gradients and cards.</p>
-        <a href="#" class="btn">Learn More</a>
-    </div>
+    <h2>About</h2>
+    <p>We provide structured information in a clean and readable format.</p>
 
-    <div class="card">
-        <h2>Our Services</h2>
-        <p>We create modern, responsive, and beautiful websites.</p>
-        <a href="#" class="btn">View Services</a>
-    </div>
+    <h2>Services</h2>
+    <ul>
+        <li>Web Development</li>
+        <li>Consulting</li>
+        <li>Support</li>
+    </ul>
 
-    <div class="card">
-        <h2>Contact</h2>
-        <p>Get in touch with us for your next project.</p>
-        <a href="#" class="btn">Contact Us</a>
-    </div>
-
+    <h2>Contact</h2>
+    <p>Email: info@example.com</p>
 </div>
 
 <footer>
-    <p>&copy; 2026 Colorful Website | Designed with ❤️</p>
+    <p>&copy; 2026 Info Website</p>
 </footer>
 
 </body>
